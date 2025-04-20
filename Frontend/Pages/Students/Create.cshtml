@@ -59,7 +59,10 @@
 <div class="form-container">
     <h2>Thêm Mới Học Sinh</h2>
 
-    <form method="post">
+    <form method="post" asp-page-handler="SendAddStudentRequest">
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+
         <div class="form-group">
             <label for="iMaHocSinh">Mã học sinh</label>
             <input type="text" asp-for="HocSinh.iMaHS" required />

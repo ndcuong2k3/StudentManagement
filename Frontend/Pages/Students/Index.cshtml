@@ -69,11 +69,11 @@
     <tbody>
         @if (Model.Students != null)
         {
-            int id = 1;
+
             foreach (var hs in Model.Students)
             {
                 <tr>
-                    <td>@id</td>
+                    <td>@hs.iMaHS</td>
                     <td>@hs.sHoTen</td>
                     <td>@hs.iMaLop</td>
                     <td>@hs.dNgaySinh.ToString("dd/MM/yyyy")</td>
@@ -89,7 +89,6 @@
                         </form>
                     </td>
                 </tr>
-                id++;
             }
         }
         else
