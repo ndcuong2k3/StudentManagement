@@ -1,0 +1,118 @@
+﻿@page "{id:int}"
+@model UpdateModel
+@{
+    ViewData["Title"] = "Chỉnh sửa thông tin học sinh";
+}
+
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 40px auto;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    .form-actions {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .btn-submit {
+        padding: 10px 20px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<div class="form-container">
+    <h2>Chỉnh sửa thông tin học sinh</h2>
+
+    <form method="post" asp-page-handler="SendUpdateStudentRequest">
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="form-group">
+            <label for="iMaHocSinh">Mã học sinh</label>
+            <input type="text" asp-for="HocSinh.iMaHS" readonly />
+        </div>
+
+        <div class="form-group">
+            <label for="sHoTen">Họ và tên</label>
+            <input type="text" asp-for="HocSinh.sHoTen" required />
+        </div>
+
+        <div class="form-group">
+            <label for="bGioiTinh">Giới tính</label>
+            <select asp-for="HocSinh.bGioiTinh">
+                <option value="true">Nam</option>
+                <option value="false">Nữ</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="dNgaySinh">Ngày sinh</label>
+            <input type="date" asp-for="HocSinh.dNgaySinh" required />
+        </div>
+
+        <div class="form-group">
+            <label for="sDiaChi">Địa chỉ</label>
+            <textarea asp-for="HocSinh.sDiaChi" rows="3" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="sSoDienThoai">Số điện thoại</label>
+            <input type="text" asp-for="HocSinh.sSoDienThoai" maxlength="11" pattern="0[0-9]{9,10}" required />
+        </div>
+
+        <div class="form-group">
+            <label for="iMaLop">Lớp học</label>
+            <select asp-for="HocSinh.iMaLop" asp-items="Model.LopHocList" required>
+                <option value="">-- Chọn lớp học --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="bTrangThai">Trạng thái</label>
+            <select asp-for="HocSinh.bTrangThai">
+                <option value="true">Đang học</option>
+                <option value="false">Đã nghỉ</option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Lưu học sinh</button>
+        </div>
+    </form>
+</div>

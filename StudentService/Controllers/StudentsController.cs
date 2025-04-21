@@ -1,28 +1,37 @@
-﻿    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using StudentManagementSystem.StudentService.Data;
-    using StudentService.Models;
-    using System.Net.Http;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using StudentManagementSystem.StudentService.Data;
+using StudentService.Models;
 
-    namespace StudentManagementSystem.StudentService.Controllers;
+namespace StudentManagementSystem.StudentService.Controllers;
 
-    [ApiController]
-    [Route("api/students")]
-    public class StudentsController : ControllerBase
+[ApiController]
+[Route("api/students")]
+public class StudentsController : ControllerBase
+{
+    private readonly AppDbContext _context;
+
+    public StudentsController(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+    }
 
-        public StudentsController(AppDbContext context)
-        {
-            _context = context;
-        }
+    [HttpGet]
+    [Route("GetStudents")]
+    public async Task<ActionResult<List<Student>>> GetStudents()
+    {
+        return await _context.tblHocSinh.ToListAsync();
+    }
 
-        [HttpGet]
-        [Route("GetStudents")]
-        public async Task<ActionResult<List<Student>>> GetStudents()
-        {
-            return await _context.tblHocSinh.ToListAsync();
-        }
+    [HttpGet]
+    [Route("GetStudentByID")]
+    public async Task<ActionResult<List<Student>>> GetStudentByID(int iMaHS)
+    {
+        var student = await _context.tblHocSinh
+                               .FirstOrDefaultAsync(s => s.iMaHS == iMaHS)
+                               .ConfigureAwait(false);
+        return Ok(student);
+    }
 
     [HttpPost]
     [Route("validateStudentInformation")]
@@ -56,13 +65,13 @@
 
     [HttpPost]
     [Route("checkDuplicateStudentID")]
-    public async Task<ActionResult> CheckDuplicateStudentID( Student student)
+    public async Task<ActionResult> CheckDuplicateStudentID(Student student)
     {
         try
         {
             // Kiểm tra xem mã học sinh có tồn tại trong cơ sở dữ liệu không
             var studentExists = await _context.tblHocSinh
-                                              .AnyAsync(s => s.iMaHS == student.iMaHS).ConfigureAwait(false); 
+                                              .AnyAsync(s => s.iMaHS == student.iMaHS).ConfigureAwait(false);
 
             if (studentExists)
             {
@@ -82,29 +91,77 @@
 
 
     [HttpPost]
-        [Route("SaveStudentInformation")]
-        public async Task<ActionResult<Student>> SaveStudentInformation(Student student)
+    [Route("SaveStudentInformation")]
+    public async Task<ActionResult<Student>> SaveStudentInformation(Student student)
+    {
+        try
         {
-            try
-            {
-                _context.tblHocSinh.Add(student);
-                await _context.SaveChangesAsync();
+            _context.tblHocSinh.Add(student);
+            await _context.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(GetStudents), new { id = student.iMaHS.ToString() }, student);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return CreatedAtAction(nameof(GetStudents), new { id = student.iMaHS.ToString() }, student);
         }
-
-
-        [HttpGet]
-        [Route("GetClass")]
-        public async Task<ActionResult<List<Class>>> GetClass()
+        catch (Exception ex)
         {
-            return await _context.tblLopHoc.ToListAsync();
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
-
-
     }
+
+    [HttpPost]
+    [Route("UpdateStudent")]
+    public async Task<ActionResult<Student>> UpdateStudent(Student student)
+    {
+        try
+        {
+            var studentExits = await _context.tblHocSinh.FirstOrDefaultAsync(hs => hs.iMaHS == student.iMaHS);
+            studentExits.sHoTen = student.sHoTen;
+            studentExits.sDiaChi = student.sDiaChi;
+            studentExits.dNgaySinh = student.dNgaySinh;
+            studentExits.bGioiTinh = student.bGioiTinh;
+            studentExits.bTrangThai = student.bTrangThai;
+            studentExits.sSoDienThoai = student.sSoDienThoai;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Cập nhật học sinh thành công", data = studentExits });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    [HttpDelete]
+    [Route("DeleteStudent/{id}")]
+    public async Task<ActionResult> DeleteStudent(int id)
+    {
+        try
+        {
+            var student = await _context.tblHocSinh.FindAsync(id);
+
+            if (student == null)
+            {
+                return NotFound($"Không tìm thấy học sinh với mã: {id}");
+            }
+
+            _context.tblHocSinh.Remove(student);
+            await _context.SaveChangesAsync();
+
+            return Ok($"Đã xóa học sinh có mã: {id}");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Lỗi server: {ex.Message}");
+        }
+    }
+
+
+
+    [HttpGet]
+    [Route("GetClass")]
+    public async Task<ActionResult<List<Class>>> GetClass()
+    {
+        return await _context.tblLopHoc.ToListAsync();
+    }
+
+
+}

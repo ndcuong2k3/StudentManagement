@@ -1,4 +1,4 @@
-﻿@page 
+﻿@page
 @model IndexModel
 
 <style>
@@ -48,44 +48,43 @@
     }
 </style>
 
-<form method="get" asp-page="/Students/Create" asp-route-iMaHS="aaa">
-    <button type="submit" class="btn-add">Thêm Học Sinh</button>
+<form method="get" asp-page="/Teachers/Create" asp-route-iMaGV="aaa">
+    <button type="submit" class="btn-add">Thêm Giáo Viên</button>
 </form>
 
-<h1><strong>Danh Sách Học Sinh</strong></h1>
+<h1><strong>Danh Sách Giáo Viên</strong></h1>
 
 <table class="custom-table">
     <thead>
         <tr>
             <th>ID</th>
-            <th>Tên Học Sinh</th>
-            <th>Lớp Học</th>
-            <th>Ngày Sinh</th>
-            <th>Giới Tính</th>
+            <th>Tên Giáo Viên</th>
+            <th>Chuyên Môn</th>
             <th>Địa Chỉ</th>
+            <th>Số Điện Thoại</th>
+            <th>Email</th>
             <th>Hành Động</th>
         </tr>
     </thead>
     <tbody>
-        @if (Model.Students != null)
+        @if (Model.Teachers != null)
         {
-
-            foreach (var hs in Model.Students)
+            foreach (var gv in Model.Teachers)
             {
                 <tr>
-                    <td>@hs.iMaHS</td>
-                    <td>@hs.sHoTen</td>
-                    <td>@hs.iMaLop</td>
-                    <td>@hs.dNgaySinh.ToString("dd/MM/yyyy")</td>
-                    <td>@(hs.bGioiTinh ? "Nam" : "Nữ")</td>
-                    <td>@hs.sDiaChi</td>
+                    <td>@gv.iMaGV</td>
+                    <td>@gv.sHoTen</td>
+                    <td>@gv.sChuyenMon</td>
+                    <td>@gv.sDiaChi</td>
+                    <td>@gv.sSoDienThoai</td>
+                    <td>@gv.sEmail</td>
                     <td>
-                        <form method="get" asp-page="/Students/Update" asp-route-id="@hs.iMaHS" style="display:inline;">
+                        <form method="get" asp-page="/Teachers/Update" asp-route-id="@gv.iMaGV" style="display:inline;">
                             <button type="submit" class="btn-action">Chỉnh sửa</button>
                         </form>
 
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@hs.iMaHS" style="display:inline;"
-                              onsubmit="return confirm('Bạn có chắc muốn xóa học sinh này không?');">
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@gv.iMaGV" style="display:inline;"
+                              onsubmit="return confirm('Bạn có chắc muốn xóa giáo viên này không?');">
                             <button type="submit" class="btn-action">Xóa</button>
                         </form>
                     </td>
@@ -95,7 +94,7 @@
         else
         {
             <tr>
-                <td colspan="7">Không có học sinh nào.</td>
+                <td colspan="7">Không có giáo viên nào.</td>
             </tr>
         }
     </tbody>

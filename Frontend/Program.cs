@@ -4,7 +4,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient("StudentAPI", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5001"); // API Gateway
+    client.BaseAddress = new Uri("http://localhost:5001"); 
+});
+builder.Services.AddHttpClient("TeacherAPI", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5001");
 });
 var app = builder.Build();
 
